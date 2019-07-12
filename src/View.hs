@@ -7,8 +7,8 @@ import           Miso.String
 import           Constants
 import           Model
 
-mainView :: Model -> View action
-mainView m@Model{..} = wrapper [ div_ [ style_ style ] content ]
+mainView :: Model -> View Action
+mainView m@Model{..} = wrapper [ div_ [ style_ style, onClick Touched ] content ]
   where
     style = M.fromList
       [ ("width", (ms gameWidth) <> "px")

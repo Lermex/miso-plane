@@ -10,9 +10,13 @@ import           Model
 
 updateModel :: Action -> Model -> Effect Action Model
 updateModel action m@Model{..} = case action of
-  Time newTime  -> step newTime m
-  Keyboard keys -> if S.member 32 keys then noEff (m & transitionState & updatePlayerVelocity) else noEff m
+  Time newTime      -> step newTime m
+  Keyboard keys     -> if S.member 32 keys then noEff (jump m) else noEff m
+  Touched           -> noEff (jump m)
   NewPillars height -> noEff m { pillars = generatePillars height <> pillars }
+
+jump :: Model -> Model
+jump m = m & transitionState & updatePlayerVelocity
 
 step :: Double -> Model -> Effect Action Model
 step newTime m = batchEff newModel (if shouldAddPillar then [ timeEffect, pillarsEffect ] else [ timeEffect ])

@@ -9,6 +9,7 @@ import           Constants
 data Action
   = Time Double
   | Keyboard (S.Set Int)
+  | Touched
   | NewPillars Int
   deriving (Eq, Show)
 
