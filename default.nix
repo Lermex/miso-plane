@@ -1,35 +1,48 @@
-{ pkgs ? import ((import <nixpkgs> {}).fetchFromGitHub {
+{ nixpkgs ? (import <nixpkgs> {}).fetchFromGitHub {
      owner = "NixOS";
      repo = "nixpkgs";
-     rev = "b9fa31c";
-     sha256 = "1iqdra7nvcwbydjirjsk71rpzk4ljc0gzqy33fcp8l18y8iwh47k";
-   }){},
+     rev = "4dd5c93998da55002fdec1c715c680531420381c";
+     sha256 = "06paxakic36nbdnwkkb1094fzp3lpzxxb1r57gmb3py6pb6xrcnh";
+   }
 }:
 
 let
-  ghcjs = pkgs.haskell.packages.ghcjs84.override {
-     overrides = self: super: {
-       aeson = pkgs.haskell.lib.dontCheck super.aeson;
-       http-types = pkgs.haskell.lib.dontCheck super.http-types;
-       natural-transformation = pkgs.haskell.lib.dontCheck super.natural-transformation;
-       scientific = pkgs.haskell.lib.dontCheck super.scientific;
-       servant = pkgs.haskell.lib.dontCheck super.servant;
-       uri-bytestring = pkgs.haskell.lib.dontCheck super.uri-bytestring;
-       uuid-types = pkgs.haskell.lib.dontCheck super.uuid-types;
-       foundation = pkgs.haskell.lib.dontCheck super.foundation;
-     };
+  overrides = pkgs: {
+    haskell = pkgs.haskell // {
+      packages = pkgs.haskell.packages // {
+        ghc864 = pkgs.haskell.packages.ghc864.override {
+          overrides = self: super: with pkgs.haskell.lib; {
+            happy = dontCheck (super.callHackage "happy" "1.19.9" {});
+            mkDerivation = args: super.mkDerivation (args // {
+              enableLibraryProfiling = false;
+              doCheck = false;
+              doHaddock = false;
+            });
+          };
+        };
+        ghcjs86 = pkgs.haskell.packages.ghcjs86.override {
+          overrides = self: super: {
+            jsaddle-warp = super.callPackage ./jsaddle-warp-ghcjs.nix {};
+            mkDerivation = args: super.mkDerivation (args // { doCheck = false; });
+            doctest = null;
+          };
+        };
+      };
+    };
   };
 
-  result = import (pkgs.fetchFromGitHub {
-    owner = "puffnfresh";
-    repo = "miso";
-    sha256 = "1nng214balji3r1f0afh75vkmip1xn66ml8fmg899f6v71yqi307";
-    rev = "1c29116cdc8454337097aee23cbf0bd6744c1d41";
-  }) {};
+  pkgs = import nixpkgs { config.packageOverrides = overrides; };
 
-  miso-ghcjs = result.miso-ghcjs;
+  ghcjs = pkgs.haskell.packages.ghcjs;
+
+  miso = ghcjs.callCabal2nix "miso" (pkgs.fetchFromGitHub {
+    owner  = "dmjio";
+    repo   = "miso";
+    rev    = "9b05dbb25feae1b1dc9ac0b7da2c1fc875374c1d";
+    sha256 = "1h46mmlcszm4nmwq7yiy3sdks0xy3ww3pm41cz6zpg1hmikf40fm";
+  }){};
 
 in
   ghcjs.callCabal2nix "miso-plane" ./. {
-    miso = miso-ghcjs;
+    inherit miso;
   }
