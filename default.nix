@@ -22,7 +22,6 @@ let
         };
         ghcjs86 = pkgs.haskell.packages.ghcjs86.override {
           overrides = self: super: {
-            jsaddle-warp = super.callPackage ./jsaddle-warp-ghcjs.nix {};
             mkDerivation = args: super.mkDerivation (args // { doCheck = false; });
             doctest = null;
           };

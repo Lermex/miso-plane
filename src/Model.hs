@@ -1,8 +1,6 @@
 module Model where
 
 import qualified Data.Set    as S
-import           Miso
-import           Miso.String
 
 import           Constants
 
@@ -51,4 +49,5 @@ initialModel = Model
   , pillars = []
   , score = 0
   , time = 0
+  , delta = 0
   }

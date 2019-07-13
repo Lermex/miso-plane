@@ -28,31 +28,31 @@ mainView m@Model{..} = wrapper [ div_ [ style_ style, onClick Touched ] content 
       ]
 
 backgroundView :: Model -> View action
-backgroundView m@Model{..} = wrapper
+backgroundView Model{..} = wrapper
   [ image gameWidth gameHeight (negate backgroundX) 0 "images/background.png"
   , image gameWidth gameHeight ((fromIntegral gameWidth) - backgroundX) 0 "images/background.png"
   ]
 
 playerView :: Model -> View action
-playerView m@Model{..} =
+playerView Model{..} =
   image planeWidth planeHeight playerX y "images/plane.gif"
 
 pillarsView :: Model -> View action
 pillarsView m@Model{..} = wrapper $ fmap (pillarView m) pillars
 
 pillarView :: Model -> Pillar -> View action
-pillarView m@Model{..} Pillar{..} =
+pillarView Model{..} Pillar{..} =
   let imageName = if pillarKind == Top then "images/topRock.png" else "images/bottomRock.png"
   in image pillarWidth pillarHeight pillarX pillarY imageName
 
 messageView :: Model -> View action
-messageView m@Model{..} = case state of
+messageView Model{..} = case state of
   GameOver -> image 250 45 115 150 "images/textGameOver.png"
   Start    -> image 250 45 115 150 "images/textGetReady.png"
   _        -> emptyView
 
 scoreView :: Model -> View action
-scoreView m@Model{..} = p_ [ style_ style ] [ text (ms score) ]
+scoreView Model{..} = p_ [ style_ style ] [ text (ms score) ]
   where
     style = M.fromList
       [ ("display", "block")
