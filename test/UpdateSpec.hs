@@ -342,8 +342,9 @@ spec = describe "Update" $ do
       let p = farPillar { pillarX = 300 }
       let m = playModel { pillars = [p], delta = 100 }
       let m' = updatePillars m
-      let [p'] = pillars m'
-      pillarX p' `shouldBe` (300 - foregroundScrollV * 100)
+      case pillars m' of
+        [p'] -> pillarX p' `shouldBe` (300 - foregroundScrollV * 100)
+        _    -> expectationFailure "expected exactly one pillar"
 
     it "removes off-screen pillars" $ do
       let p = farPillar { pillarX = -fromIntegral pillarWidth - 1 }
