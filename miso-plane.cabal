@@ -32,3 +32,30 @@ executable client
     -Wincomplete-uni-patterns
     -Wredundant-constraints
     -fno-warn-missing-home-modules
+
+test-suite tests
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  hs-source-dirs: test, src
+  other-modules:
+    Constants
+    ConstantsSpec
+    Model
+    ModelSpec
+    Update
+    UpdateSpec
+  build-depends:
+      base
+    , containers
+    , hspec
+    , hspec-discover
+    , miso
+    , random
+  default-language:    Haskell2010
+  default-extensions:  DataKinds DeriveGeneric OverloadedStrings TypeOperators TypeFamilies RecordWildCards NamedFieldPuns
+  ghc-options:
+    -Wall
+    -Wcompat
+    -Wincomplete-record-updates
+    -Wincomplete-uni-patterns
+    -Wredundant-constraints
